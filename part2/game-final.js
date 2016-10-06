@@ -6,17 +6,17 @@ var planet = 0;
 var timer;
 var centerX = 200;
 var centerY = 225;
+var planetRadius = 72;
 var angle = 0;
-var activeObjects = [];
-var planets = [];
 var GRAVITATIONAL_CONSTANT = 1;/* this depends on what feels right for your game */;
 
 function preload() {
 
-    game.load.image('player','assets/red-asteroid.png');
-    game.load.image('enemy','assets/grey-asteroid.png');
-    game.load.image('planet','assets/exo-planet.png');
-    game.load.image('background','assets/space-background.png');
+    game.load.image('player','./assets/red-asteroid.png');
+    game.load.image('enemy','./assets/grey-asteroid.png');
+    game.load.image('planet','./assets/red-planet.png');
+    game.load.image('background','./assets/space-background.png');
+    game.load.image('particle','./assets/particle.png')
 }
 
 function create(){
@@ -44,9 +44,7 @@ function start () {
 
 	game.physics.arcade.enable(planet);
 
-	planet.body.setCircle(80);
-
-  planets.push(planet);
+	planet.body.setCircle(planetRadius);
 
 	player = game.add.sprite(0,0, 'player');
 	player.anchor.set(0.5);
@@ -61,7 +59,11 @@ function start () {
 
 	roids.createMultiple(40,'enemy');
 
-	timer = game.time.events.loop(2500,newEnemy,this);
+	timer = game.time.events.loop(1500,newEnemy,this);
+
+  emitter = game.add.emitter(0, 0, 100);
+  emitter.gravity = 0;
+  emitter.makeParticles('particle');
 }
 
 function newEnemy(){
@@ -82,22 +84,24 @@ function newEnemy(){
 
 	roid.reset(x,y);
 
-  activeObjects.push(roid);
+	var angle = game.physics.arcade.moveToXY(roid,centerX + game.rnd.between(-50,50),centerY,50);
 
-	// var angle = game.physics.arcade.moveToXY(roid,centerX,centerY,50);
-  //
-	// roid.rotation = angle;
-
+	roid.rotation = angle;
 }
 
 function onFail() {
 	game.paused = true;
+  console.log('hey');
 }
 
 function onHit (player,roid) {
 
-	roid.kill();
 	game.camera.shake(0.02,100);
+  emitter.x = roid.x;
+  emitter.y = roid.y;
+  emitter.start(true, 2000, null, 10);
+
+  roid.kill();
 }
 
 function update(){
@@ -116,40 +120,10 @@ function update(){
   	else{
   		angle -= 0.1;
   	}
-
   }
 
    player.body.x = centerX + Math.cos(angle) * 120;
    player.body.y = centerY + Math.sin(angle) * 120;
-
-   for (var i = 0; i < activeObjects.length; i++) {
-     var asteroid = activeObjects[i];
-
-     for (var j = 0; j < planets.length; j++) {
-       var planet = planets[j];
-       var dx = planet.x - asteroid.x;
-       var dy = planet.y - asteroid.y;
-       var distanceSquared = dx * dx + dy * dy;
-       var distance = Math.sqrt(distanceSquared);
-       var acceleration = GRAVITATIONAL_CONSTANT * planet.mass / distanceSquared;
-       asteroid.velocity.x += acceleration * (dx / distance);
-       asteroid.velocity.y += acceleration * (dy / distance);
-     }
-   }
-
-  //  for (var projectile in projectiles) {
-  //    for (var planet in planets) {
-  //      var dx = planet.x - projectile.x;
-  //      var dy = planet.y - projectile.y;
-  //      var distanceSquared = dx * dx + dy * dy;
-  //      var distance = Math.sqrt(distanceSquared);
-  //      var acceleration = GRAVITATIONAL_CONSTANT * planet.mass / distanceSquared;
-  //      projectile.velocityX += acceleration * (dx / distance);
-  //      projectile.velocityY += acceleration * (dy / distance);
-  //    }
-  //    projectile.x += projectile.velocityX;
-  //    projectile.y += projectile.velocityY;
-  //  }
 
 }
 

@@ -23,11 +23,11 @@ function create(){
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 
 	game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-    game.scale.minWidth = 200;
-    game.scale.minHeight = 225;
-    game.scale.maxWidth = 800;
-    game.scale.maxHeight = 1100;
-    game.scale.pageAlignHorizontally = true;
+  game.scale.minWidth = 200;
+  game.scale.minHeight = 225;
+  game.scale.maxWidth = 800;
+  game.scale.maxHeight = 1100;
+  game.scale.pageAlignHorizontally = true;
 
     start();
 
