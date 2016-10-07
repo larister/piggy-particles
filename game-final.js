@@ -49,7 +49,7 @@ function ParticleSystem() {
 }
 
 ParticleSystem.prototype.show = function(x, y) {
-    for (var i = 0; i < 500; i++) {
+    for (var i = 0; i < 50; i++) {
         var piggy = game.add.sprite(0,0, 'piggy');
 
         piggy.anchor.set(0.5);
